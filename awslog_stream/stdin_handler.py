@@ -72,7 +72,7 @@ def put_msgs(log_group_name, log_stream_name=None):
 
     put_log_event('Init log stream')
 
-    while active:
+    while True:
         log_events = []
         while q.qsize():
             msg = q.get_nowait()
@@ -84,11 +84,13 @@ def put_msgs(log_group_name, log_stream_name=None):
                     'message': msg}
                 )
 
-        if not log_events:
+        if log_events:
+            put_log_events(log_events)
+        else:
             time.sleep(1)
-            continue
-    
-        put_log_events(log_events)
+
+        if not (q.qsize() or active):
+            break    
 
     put_log_event('Close log stream')
 
