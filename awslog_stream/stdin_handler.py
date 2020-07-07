@@ -18,7 +18,7 @@ def signal_handler(signo, stack_frame):
 
 def readstdin():
     global active, q
-    timeout=1
+    timeout=0.2
 
     while active:
         (ready, _, _) = select.select([sys.stdin], [], [], timeout)
@@ -60,8 +60,8 @@ def put_msgs(log_group_name, log_stream_name=None):
         res = logs_client.put_log_events(**req)
         seq_token = res['nextSequenceToken']
     
-        time.sleep(1)
-        
+        time.sleep(0.2)
+
         return res
 
     def put_log_events(msgs:list):
@@ -100,7 +100,7 @@ def put_msgs(log_group_name, log_stream_name=None):
         if log_events:
             put_log_events(log_events)
         else:
-            time.sleep(1)
+            time.sleep(0.2)
 
         if not (q.qsize() or active):
             break    
