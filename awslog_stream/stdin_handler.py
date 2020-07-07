@@ -46,7 +46,7 @@ def put_msgs(log_group_name, log_stream_name=None):
     )
 
     seq_token=None
-    def put_log_events(msgs:list):
+    def _put_log_events(msgs:list):
         nonlocal seq_token
         req = {
             'logGroupName': log_group_name,
@@ -60,7 +60,15 @@ def put_msgs(log_group_name, log_stream_name=None):
         res = logs_client.put_log_events(**req)
         seq_token = res['nextSequenceToken']
     
+        time.sleep(1)
+        
         return res
+
+    def put_log_events(msgs:list):
+        try:
+            return _put_log_events(msgs)
+        except Exception as e:
+            print(e)
 
     def put_log_event(msg:str):
         return put_log_events([
@@ -78,11 +86,16 @@ def put_msgs(log_group_name, log_stream_name=None):
             msg = q.get_nowait()
             q.task_done()
 
-            if msg:
-                log_events.append({
-                    'timestamp': int(time.time()) * 1000,
-                    'message': msg}
-                )
+            if not msg:
+                continue
+
+            log_events.append({
+                'timestamp': int(time.time()) * 1000,
+                'message': msg}
+            )
+
+            if len(log_events) > 1000:
+                break
 
         if log_events:
             put_log_events(log_events)
