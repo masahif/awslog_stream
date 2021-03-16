@@ -69,6 +69,7 @@ def put_msgs(log_group_name, log_stream_name=None):
             return _put_log_events(msgs)
         except Exception as e:
             print(e)
+            signal_handler(None, None)
 
     def put_log_event(msg:str):
         return put_log_events([
