@@ -6,7 +6,7 @@ from setuptools import setup
 def main():
     setup(
         name='awslog_stream',
-        version='1.0.2',
+        version='1.0.3',
         description="stdin to cloudwatch logs",
         author="Mashiro Fukuda",
         author_email='masahif@hotmail.com',
@@ -19,7 +19,10 @@ def main():
         },
         classifiers=[
            'Programming Language :: Python :: 3.6',
-        ]
+        ],
+        install_requires=[
+            'boto3',
+        ],
     )
 
 
